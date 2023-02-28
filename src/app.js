@@ -1,18 +1,13 @@
 const express = require('express');
 const app = express();
-const {Server, FileStore} = require('tus-node-server');
+const {Server, FileStore, Metadata} = require('tus-node-server');
 const server = new Server({
     path: '/files',
     namingFunction: (req) => {
+        // 'upload-metadata': 'filename YmVyYmVyYmVyLm00YQ==,filetype YXVkaW8veC1tNGE=',
         const {'upload-metadata': uploadMetadata} = req.headers;
-        const spliiterUploadMetadata = uploadMetadata.split(',');
-
-        const fileName = spliiterUploadMetadata[0].split(' ')[1]
-        const filetype = spliiterUploadMetadata[1].split(' ')[1]
-        const readableFileName = Buffer.from(fileName, 'base64').toString('ascii');
-        const readableFileType = Buffer.from(filetype, 'base64').toString('ascii');
-
-        return readableFileName;
+        const { filename, filetype } = Metadata.parse(uploadMetadata);
+        return filename;
     },
 });
 
