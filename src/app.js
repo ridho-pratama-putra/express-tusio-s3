@@ -18,6 +18,7 @@ app.use(morgan('method::method url::url status::status content-length::res[conte
 
 app.all("/files/*", server.handle.bind(server));
 
-app.listen(8080, () => {
-    console.log('Server listening on port 3000');
+const port = 8080;
+app.listen(port, () => {
+    console.log(`Server listening on port ${port}`);
 });
