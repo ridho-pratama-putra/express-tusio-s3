@@ -1,13 +1,21 @@
 const express = require('express');
 const app = express();
 const {Server, FileStore, Metadata} = require('tus-node-server');
+const fs = require('fs');
+const path = require('path');
 const server = new Server({
     path: '/files',
     namingFunction: (req) => {
         // 'upload-metadata': 'filename YmVyYmVyYmVyLm00YQ==,filetype YXVkaW8veC1tNGE=',
         const {'upload-metadata': uploadMetadata} = req.headers;
         const { filename, filetype } = Metadata.parse(uploadMetadata);
-        return filename;
+        let folderPath = 'KK';
+        let child1 = 'KK';
+        if (filename.includes('KTP')) {
+            child1 = 'KTP'
+        }
+
+        return child1 + '/' + filename
     },
 });
 
@@ -25,6 +33,19 @@ app.get('/files/*', (req, res, next) => {
 
 app.post('/files/*', (req, res, next) => {
     console.log('2 :')
+    const {'upload-metadata': uploadMetadata} = req.headers;
+    const { filename, filetype } = Metadata.parse(uploadMetadata);
+
+    let child1 = 'KK';
+    if (filename.includes('KTP')) {
+        child1 = 'KTP'
+    }
+
+    fs.mkdir('files/'+child1, { recursive: true }, (err) => {
+        if (err) throw err;
+        console.log(`Folder berhasil dibuat!`);
+    });
+
     server.handle(req, res)
 });
 
@@ -48,7 +69,7 @@ app.delete('/files/*', (req, res, next) => {
     server.handle(req, res)
 });
 
-const port = 8080;
+const port = 8081;
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 });
